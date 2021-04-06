@@ -2,10 +2,10 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.github.javafaker.Faker;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Owner;
-import io.qameta.allure.Story;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
 import static io.qameta.allure.Allure.step;
@@ -50,20 +50,22 @@ public class LoginPage {
         });
 
         step("Checking if a new user is created", () -> {
-            $(".alert-success").shouldHave().text().contains("Account created successfully");
+            $(".alert-success").shouldHave(text("Account created successfully"));
             WebDriverRunner.url().equals(BASE_URL+"dashboard?new_account=true");
-            $(".cm-header .nav-user").shouldHave().text().contains(firstName);
+            $(".cm-header .nav-user").shouldHave(text(firstName));
+
         });
 
         step("Checking if user's data is saved correclty", () -> {
             $(".cm-header .nav-user").click();
             $(withText("Profile Information")).click();
-            $("#user_first_name").getValue().equals(firstName);
-            $("#user_last_name").getValue().equals(lastName);
-            $("#user_contact_number").getValue().equals(phone);
-            $("#user_account_attributes_default_country").shouldHave().selectOptionContainingText(conuntry);
-            $(".table-edged td").shouldHave().text().contains(email);
-            $("#user_account_attributes_company_attributes_name").getValue().equals(company);
+            $("#user_first_name").shouldHave(value(firstName));
+            $("#user_last_name").shouldHave(value(lastName));
+            $("#user_contact_number").shouldHave(value(phone));
+            $("#user_account_attributes_default_country").$("option").shouldHave(attribute("selected")).shouldHave(text(conuntry));
+            $(".table-edged td").shouldHave(text(email));
+            $("#user_account_attributes_company_attributes_name").shouldHave(value(company));
+
         });
     }
 
